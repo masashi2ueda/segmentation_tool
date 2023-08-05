@@ -144,18 +144,3 @@ def create_tfpn_merged_img(
     draw_img(2, 1, draw_mask_enhancement(img_hwc, tru_mask_hw, alpha))
     return show_img_hwc
 
-
-# %%
-if __name__ == "__main__":
-    h = 100
-    w = 200
-    tru_mask = numpy.zeros((h, w))
-    prd_mask = numpy.zeros((h, w))
-    tru_mask[:50, :] = 1
-    prd_mask[:, :50] = 1
-    tfpns = convert_TFPN(tru_mask, prd_mask)
-
-    calc_confusion(tru_mask, prd_mask)
-    import matplotlib.pyplot as plt
-    tfpn_img_hwc = create_tfpn_image(tru_mask, prd_mask)
-    plt.imshow(tfpn_img_hwc)
