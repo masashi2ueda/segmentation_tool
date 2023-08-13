@@ -1,0 +1,11 @@
+LICENSE
+README.md
+setup.py
+segmentation_tool/__init__.py
+segmentation_tool/confusion.py
+segmentation_tool/utils.py
+segmentation_tool.egg-info/PKG-INFO
+segmentation_tool.egg-info/SOURCES.txt
+segmentation_tool.egg-info/dependency_links.txt
+segmentation_tool.egg-info/requires.txt
+segmentation_tool.egg-info/top_level.txt
