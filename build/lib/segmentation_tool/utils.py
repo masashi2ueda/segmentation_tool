@@ -98,7 +98,7 @@ def create_shift_grid(h: int, w: int, ty: float, tx: float) -> torch.Tensor:
 
 def grid_shift_sample(
     img_chw__bchw: torch.Tensor,
-    grid_hwc: torch.Tensor = None,
+    grid_hwc__bhwc: torch.Tensor = None,
     ty: float = None, tx: float = None,
     mode: str = 'bilinear',
     padding_mode: str = 'border',
@@ -108,7 +108,7 @@ def grid_shift_sample(
 
     Args:
         img_chw__bchw (torch.Tensor): src_image. with or without batch channnel.
-        grid_hwc (torch.Tensor, optional): grid. Defaults to None.
+        grid_hwc__bhwc (torch.Tensor, optional): grid. with or without batch channnel. Defaults to None.
         ty (float): translation for y(direction of height).
             ex:case +1, [1, 2, 3] -> [1, 1, 2].
             Defaults to None.
@@ -143,15 +143,22 @@ def grid_shift_sample(
     is_src_batch = len(img_chw__bchw.shape) == 4
     img_bchw = img_chw__bchw if is_src_batch else img_chw__bchw.unsqueeze(0)
 
-    if grid_hwc is None:
+    if grid_hwc__bhwc is None:
         w = img_chw__bchw.shape[-1]
         h = img_chw__bchw.shape[-2]
-        grid_hwc = create_shift_grid(h=h, w=w, ty=ty, tx=tx)
+        grid_hwc__bhwc = create_shift_grid(h=h, w=w, ty=ty, tx=tx)
+
+    src_bach_size = img_bchw.shape[0]
+    if len(grid_hwc__bhwc.shape) == 3:
+        grid_hwc = grid_hwc__bhwc
+        grid_hwc__bhwc = grid_hwc.unsqueeze(0).repeat(src_bach_size, 1, 1, 1)
 
     dst_img_bchw = F.grid_sample(
-        img_bchw, grid_hwc.unsqueeze(0),
+        img_bchw, grid_hwc__bhwc,
         mode=mode, padding_mode=padding_mode,
         align_corners=align_corners)
 
     dst = dst_img_bchw if is_src_batch else dst_img_bchw[0, ...]
     return dst
+
+# %%
